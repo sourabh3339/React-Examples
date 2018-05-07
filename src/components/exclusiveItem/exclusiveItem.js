@@ -1,14 +1,19 @@
 import React from 'react'
 import {Segment,Button,Input, Label} from 'semantic-ui-react'
+import { connect } from 'react-redux'
+import {Store} from '../../core/store'
+import  * as Actions from './action.js'
 
 class exclusiveItem extends React.Component{
     constructor(props){
         super(props);
-        this.state ={
+        this.is_button = props.properties?props.properties.is_button:undefined;
+        this.state = {
             row:[]
-        }
+        };
         this.addRow = this.addRow
         this.removeRow = this.removeRow.bind(this)
+        this._dispatch_action = this._dispatch_action.bind(this)
     }
     componentWillMount(){
 
@@ -27,7 +32,7 @@ class exclusiveItem extends React.Component{
     createrow(){
         var row =[];
         for(var i in this.state.row){
-            row.push(<Segment small key={this.state.row[i]}>
+            row.push(<Segment key={this.state.row[i]}>
                 <Label>{this.state.row[i]}</Label>
                 <Input/>
                 <Button floated='right' compact id={this.state.row[i]} onClick={this.removeRow}>REMOVE ROW</Button>
@@ -37,9 +42,13 @@ class exclusiveItem extends React.Component{
             row
         )
     }
+    _dispatch_action(){
+        Store.dispatch(Actions.addRowData(this.state));
+    }
     render(){
         return(
             <Segment raised padded style={{backgroundColor:"#d6dbdf"}}>
+    {this.is_button?(<Button compact onClick={()=>{this._dispatch_action()}}>Do Action</Button>):null}
                 <Button compact onClick={()=>{this.addRow()}}>ADD ROW</Button>
                 {this.createrow()}
             </Segment>
@@ -47,4 +56,12 @@ class exclusiveItem extends React.Component{
     }
 }
 
-export default exclusiveItem;
+function mapStateToProps(state, otherProps) {
+    const {itemData} = state;
+    if(itemData && itemData[row]){
+        return itemData[row];
+    }
+    return {}
+}
+
+export default connect(mapStateToProps)(exclusiveItem);

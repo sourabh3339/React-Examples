@@ -31,7 +31,7 @@ class MainPage extends React.Component {
                 </Segment>
 
                 <Segment>
-                    <ExclusiveItem/>
+                    <ExclusiveItem properties={{is_button:true}}/>
                 </Segment>
                 
             </Container>

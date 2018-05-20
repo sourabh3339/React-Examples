@@ -7,9 +7,13 @@ import  * as Actions from './action.js'
 class exclusiveItem extends React.Component{
     constructor(props){
         super(props);
-        this.is_button = props.properties?props.properties.is_button:undefined;
+
+        let {is_button,id } = props.properties?props.properties:{};
+
         this.state = {
-            row:[]
+            is_button,
+            id,
+            row:this.props.row?this.props.row:[]
         };
         this.addRow = this.addRow
         this.removeRow = this.removeRow.bind(this)
@@ -19,9 +23,12 @@ class exclusiveItem extends React.Component{
 
     }
     addRow(){
-        this.setState({
-            row:this.state.row.concat([new Date().toString()])
-        })
+        // this.setState({
+        //      row:this.state.row.concat([new Date().toString()])
+        //  })
+        let payload = Object.assign({},this.state);
+        payload.new_item = new Date().toString();
+        Store.dispatch(Actions.addRowData(payload));
     }
     removeRow(evt){
         var index = this.state.row.indexOf(evt.target.id);
@@ -29,13 +36,14 @@ class exclusiveItem extends React.Component{
             row: [...prevState.row.slice(0,index), ...prevState.row.slice(index+1)]
           }))
     }
-    createrow(){
+    createrow(rows){
         var row =[];
-        for(var i in this.state.row){
-            row.push(<Segment key={this.state.row[i]}>
-                <Label>{this.state.row[i]}</Label>
-                <Input/>
-                <Button floated='right' compact id={this.state.row[i]} onClick={this.removeRow}>REMOVE ROW</Button>
+        for(var i in rows){
+            row.push(
+                <Segment key={rows[i]}>
+                    <Label>{rows[i]}</Label>
+                    <Input/>
+                    <Button floated='right' compact id={rows[i]} onClick={this.removeRow}>REMOVE ROW</Button>
                 </Segment>)
         }
         return(
@@ -43,25 +51,35 @@ class exclusiveItem extends React.Component{
         )
     }
     _dispatch_action(){
-        Store.dispatch(Actions.addRowData(this.state));
+        //Store.dispatch(Actions.addRowData(this.state));
+        Store.dispatch(Actions.removeRowData(this.state));
+    }
+    componentWillReceiveProps(nextProps){
+       // this.state.row = nextProps.row;
+       if(nextProps.new_item){
+            this.setState({
+                row:this.state.row.concat([nextProps.new_item])
+            });
+       }
     }
     render(){
         return(
             <Segment raised padded style={{backgroundColor:"#d6dbdf"}}>
-    {this.is_button?(<Button compact onClick={()=>{this._dispatch_action()}}>Do Action</Button>):null}
+                {this.state.is_button?(<Button compact onClick={()=>{this._dispatch_action()}}>Do Action</Button>):null}
                 <Button compact onClick={()=>{this.addRow()}}>ADD ROW</Button>
-                {this.createrow()}
+                {this.createrow(this.state.row)}
             </Segment>
         )
     }
 }
 
 function mapStateToProps(state, otherProps) {
-    const {itemData} = state;
-    if(itemData && itemData[row]){
-        return itemData[row];
+   
+    return {
+        row:state.exclusiveItem.row,
+        new_item:state.exclusiveItem.new_item
     }
-    return {}
+    
 }
 
 export default connect(mapStateToProps)(exclusiveItem);

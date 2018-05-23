@@ -6,15 +6,14 @@ export default (state = {}, action ) => {
     switch (action.type) {
         case "ADD_ITEM":
             obj = {
-                new_item,id
+                new_item
             };
             return Object.assign({},state, obj);
         case "REMOVE_ITEM":
-            obj = {
-                row : [...row]
-            };      
-            obj.row.pop();
-            return Object.assign({},obj);
+            return Object.assign({},state,{
+                row:action.row,
+                new_item:null
+            });
     }
     return state;
 }

@@ -60,6 +60,10 @@ class exclusiveItem extends React.Component{
             this.setState({
                 row:this.state.row.concat([nextProps.new_item])
             });
+       } else {
+        this.setState({
+            row:nextProps.row.slice(0,nextProps.row.length)
+        });
        }
     }
     render(){
@@ -74,11 +78,18 @@ class exclusiveItem extends React.Component{
 }
 
 function mapStateToProps(state, otherProps) {
-   
-    return {
-        row:state.exclusiveItem.row,
-        new_item:state.exclusiveItem.new_item
-    }
+   if(state.exclusiveItem.new_item==null){
+        return {
+            row:state.exclusiveItem.row
+        }
+   } else {
+       return {
+           new_item:state.exclusiveItem.new_item
+       }
+   }
+
+
+
     
 }
 

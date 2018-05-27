@@ -13,21 +13,27 @@ class exclusiveItem extends React.Component{
         this.state = {
             is_button,
             id,
-            row:this.props.row?this.props.row:[]
+            row:this.props.row?this.props.row:[],
+            input_value:""
         };
         this.addRow = this.addRow
         this.removeRow = this.removeRow.bind(this)
         this._dispatch_action = this._dispatch_action.bind(this)
+        this.handleChange = this.handleChange.bind(this)
     }
     componentWillMount(){
 
     }
+    handleChange(evt){
+        this.setState({ input_value: evt.target.value });
+    }
     addRow(){
-        // this.setState({
-        //      row:this.state.row.concat([new Date().toString()])
-        //  })
         let payload = Object.assign({},this.state);
-        payload.new_item = new Date().toString();
+        if(this.state.input_value){
+            payload.new_item = this.state.input_value;
+        } else {
+            return;
+        }
         Store.dispatch(Actions.addRowData(payload));
     }
     removeRow(evt){
@@ -70,6 +76,7 @@ class exclusiveItem extends React.Component{
         return(
             <Segment raised padded style={{backgroundColor:"#d6dbdf"}}>
                 {this.state.is_button?(<Button compact onClick={()=>{this._dispatch_action()}}>Do Action</Button>):null}
+                <Input onChange={this.handleChange}/>
                 <Button compact onClick={()=>{this.addRow()}}>ADD ROW</Button>
                 {this.createrow(this.state.row)}
             </Segment>
@@ -78,19 +85,12 @@ class exclusiveItem extends React.Component{
 }
 
 function mapStateToProps(state, otherProps) {
-   if(state.exclusiveItem.new_item==null){
-        return {
-            row:state.exclusiveItem.row
-        }
-   } else {
-       return {
-           new_item:state.exclusiveItem.new_item
-       }
-   }
-
-
-
-    
+    const id = otherProps.properties.id;
+    if(state.exclusiveItem && state.exclusiveItem[id]){
+         let  {row, new_item} = state.exclusiveItem[id];
+         return {row, new_item};
+    }
+   return {row:[], new_item:""};  
 }
 
 export default connect(mapStateToProps)(exclusiveItem);

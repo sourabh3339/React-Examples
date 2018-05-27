@@ -27,11 +27,11 @@ class MainPage extends React.Component {
             <Container fluid style={{backgroundColor:this.state.backgroundcolor}}>
                 <Header as='h3' textAlign='center'>{this.state.title}</Header>
                 <Segment raised>
-                    <ExclusiveItem properties={{is_button:false,id:"first"}}/>
+                    <ExclusiveItem properties={{is_button:false,id:"first_items"}}/>
                 </Segment>
 
                 <Segment>
-                    <ExclusiveItem properties={{is_button:true,id:"second"}}/>
+                    <ExclusiveItem properties={{is_button:true,id:"second_items"}}/>
                 </Segment>
                 
             </Container>
